@@ -26,15 +26,25 @@ export async function POST(
       select: { id: true },
     });
 
-    // Marquer tous les messages comme lus
+    // Marquer tous les messages comme lus (un par un pour SQLite)
     if (unreadMessages.length > 0) {
-      await prisma.messageRead.createMany({
-        data: unreadMessages.map((msg) => ({
-          messageId: msg.id,
-          userId: user.id,
-        })),
-        skipDuplicates: true,
-      });
+      await Promise.all(
+        unreadMessages.map((msg) =>
+          prisma.messageRead.upsert({
+            where: {
+              messageId_userId: {
+                messageId: msg.id,
+                userId: user.id,
+              },
+            },
+            update: {},
+            create: {
+              messageId: msg.id,
+              userId: user.id,
+            },
+          })
+        )
+      );
     }
 
     return NextResponse.json({ success: true, count: unreadMessages.length });
@@ -43,4 +53,3 @@ export async function POST(
     return NextResponse.json({ error: "Erreur serveur" }, { status: 500 });
   }
 }
-
