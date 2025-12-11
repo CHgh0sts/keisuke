@@ -9,7 +9,7 @@
     "dev": "node server.js",
     "dev:next": "next dev",
     "build": "next build",
-    "start": "node server.js",
+    "start": "npx prisma db push && node server.js",
     "lint": "eslint",
     "db:push": "prisma db push",
     "db:seed": "npx tsx scripts/seed.ts",

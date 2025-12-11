@@ -5,5 +5,4 @@ NIXPACKS_NODE_VERSION = "22"
 cmds = ["npm run build"]
 
 [start]
-cmd = "npm run start"
-
+cmd = "npx prisma db push && node server.js"
